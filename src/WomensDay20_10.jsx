@@ -25,9 +25,10 @@ export default function WomensDay20_10() {
   const playlist = {
     rose: { name: "Tặng Em Đóa Hoa Hồng", url: "/music/Tangemdoahoahong.mp3" },
     love: { name: "Love Story", url: "/music/Love Story.mp3" },
-    piano: { name: "Romantic Piano", url: "/music/Romatic.mp3" }
+    piano: { name: "Romantic Piano", url: "/music/Romatic.mp3" },
   };
 
+  // 🎵 Tự động phát nhạc
   useEffect(() => {
     const audio = audioRef.current;
     if (audio) {
@@ -37,6 +38,7 @@ export default function WomensDay20_10() {
         try {
           await audio.play();
         } catch (e) {
+          console.warn("Autoplay bị chặn, thử kích hoạt lại bằng user action");
           document.body.addEventListener(
             "click",
             () => {
@@ -50,6 +52,7 @@ export default function WomensDay20_10() {
     }
   }, [song]);
 
+  // 🖼️ Fix tải ảnh cho mobile + iOS
   async function downloadPNG() {
     if (!cardRef.current) return;
     const canvas = await html2canvas(cardRef.current, {
@@ -57,17 +60,37 @@ export default function WomensDay20_10() {
       scale: 2,
       useCORS: true,
     });
-    const link = document.createElement("a");
-    link.download = `thiep-20-10-${recipient}.png`;
-    link.href = canvas.toDataURL("image/png");
-    link.click();
+
+    const dataUrl = canvas.toDataURL("image/png");
+    const fileName = `thiep-20-10-${recipient}.png`;
+
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+    if (isIOS || isSafari) {
+      const newTab = window.open();
+      if (newTab) {
+        newTab.document.write(
+          `<img src="${dataUrl}" style="width:100%;height:auto;"/>`
+        );
+      } else {
+        alert("Hãy bật pop-up để xem hoặc tải thiệp nhé 💖");
+      }
+    } else {
+      const link = document.createElement("a");
+      link.href = dataUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   }
 
   return (
     <div className="min-h-screen w-full flex flex-col justify-center items-center bg-gradient-to-br from-pink-50 via-rose-50 to-red-100 relative overflow-hidden p-4">
       <audio ref={audioRef} preload="auto" autoPlay loop />
 
-      {/* Dropdown chọn nhạc */}
+      {/* 🎶 Dropdown chọn nhạc */}
       <div className="fixed top-4 right-4 bg-white/70 backdrop-blur px-3 py-2 rounded-xl text-rose-600 font-medium shadow-md flex gap-2 z-50 border border-rose-100 text-sm sm:text-base">
         <select
           value={song}
@@ -80,20 +103,29 @@ export default function WomensDay20_10() {
         </select>
       </div>
 
-      {/* Hoa nền nhẹ nhàng */}
+      {/* 🌸 Hoa nền bay */}
       {Array.from({ length: 10 }).map((_, i) => (
         <motion.div
           key={i}
           className="absolute text-pink-300/40 text-2xl sm:text-3xl select-none"
-          initial={{ y: Math.random() * 600, x: Math.random() * window.innerWidth, opacity: 0 }}
+          initial={{
+            y: Math.random() * 600,
+            x: Math.random() * window.innerWidth,
+            opacity: 0,
+          }}
           animate={{ y: [Math.random() * 600, -100], opacity: [0.4, 0.8, 0.4] }}
-          transition={{ duration: 12 + Math.random() * 6, repeat: Infinity, ease: "easeInOut" }}
+          transition={{
+            duration: 12 + Math.random() * 6,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
         >
           🌸
         </motion.div>
       ))}
 
       <AnimatePresence mode="wait">
+        {/* 💌 Phong thư */}
         {step === "envelope" && (
           <motion.div
             key="envelope"
@@ -117,11 +149,14 @@ export default function WomensDay20_10() {
               >
                 💌
               </motion.div>
-              <p className="text-rose-700 font-semibold text-base sm:text-lg z-10 mt-20 sm:mt-24">Chạm để mở thư 💖</p>
+              <p className="text-rose-700 font-semibold text-base sm:text-lg z-10 mt-20 sm:mt-24">
+                Chạm để mở thư 💖
+              </p>
             </motion.div>
           </motion.div>
         )}
 
+        {/* 💖 Thiệp chúc mừng */}
         {step === "card" && (
           <motion.div
             key="card"
@@ -131,8 +166,12 @@ export default function WomensDay20_10() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1.2 }}
           >
-            <h1 className="text-4xl sm:text-6xl font-extrabold text-rose-600 mb-4 sm:mb-6 drop-shadow-lg animate-pulse">{title}</h1>
-            <p className="text-rose-400 mb-6 sm:mb-8 text-lg sm:text-xl italic">{subtitle}</p>
+            <h1 className="text-4xl sm:text-6xl font-extrabold text-rose-600 mb-4 sm:mb-6 drop-shadow-lg animate-pulse">
+              {title}
+            </h1>
+            <p className="text-rose-400 mb-6 sm:mb-8 text-lg sm:text-xl italic">
+              {subtitle}
+            </p>
             <div className="relative px-2 sm:px-4">
               <motion.div
                 className="absolute -left-4 sm:-left-8 -top-4 sm:-top-8 text-4xl sm:text-5xl"
@@ -152,7 +191,9 @@ export default function WomensDay20_10() {
                 💞
               </motion.div>
             </div>
-            <p className="text-right text-rose-500 mt-8 sm:mt-10 text-lg sm:text-xl font-semibold">— {sender}</p>
+            <p className="text-right text-rose-500 mt-8 sm:mt-10 text-lg sm:text-xl font-semibold">
+              — {sender}
+            </p>
 
             <div className="mt-4 sm:mt-6 flex flex-col items-center gap-3">
               <motion.button
