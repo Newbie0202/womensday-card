@@ -54,37 +54,52 @@ export default function WomensDay20_10() {
 
   // 🖼️ Fix tải ảnh cho mobile + iOS
   async function downloadPNG() {
-    if (!cardRef.current) return;
-    const canvas = await html2canvas(cardRef.current, {
-      backgroundColor: null,
-      scale: 2,
-      useCORS: true,
-    });
+  if (!cardRef.current) return;
+  const canvas = await html2canvas(cardRef.current, {
+    backgroundColor: null,
+    scale: 2,
+    useCORS: true,
+  });
 
-    const dataUrl = canvas.toDataURL("image/png");
-    const fileName = `thiep-20-10-${recipient}.png`;
+  const dataUrl = canvas.toDataURL("image/png");
+  const fileName = `thiep-20-10-${recipient}.png`;
 
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  const ua = navigator.userAgent || "";
+  const isIOS = /iPad|iPhone|iPod/.test(ua);
+  const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
+  const isMessenger = ua.includes("FBAN") || ua.includes("FBAV");
 
-    if (isIOS || isSafari) {
-      const newTab = window.open();
-      if (newTab) {
-        newTab.document.write(
-          `<img src="${dataUrl}" style="width:100%;height:auto;"/>`
-        );
-      } else {
-        alert("Hãy bật pop-up để xem hoặc tải thiệp nhé 💖");
-      }
+  if (isMessenger) {
+    // 🩷 Messenger chặn tải => hiển thị ảnh ngay
+    const imgWindow = window.open("", "_blank");
+    if (imgWindow) {
+      imgWindow.document.write(
+        `<body style="margin:0;display:flex;align-items:center;justify-content:center;background:#fff;">
+          <img src="${dataUrl}" style="max-width:100%;height:auto;"/>
+          <p style="font-family:sans-serif;color:#e11d48;font-weight:600;">
+            💖 Giữ tay để lưu ảnh nhé 💖
+          </p>
+        </body>`
+      );
     } else {
-      const link = document.createElement("a");
-      link.href = dataUrl;
-      link.download = fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      alert("Hãy bật pop-up để xem hoặc tải thiệp nhé 💖");
     }
+  } else if (isIOS || isSafari) {
+    const newTab = window.open();
+    if (newTab) {
+      newTab.document.write(
+        `<img src="${dataUrl}" style="width:100%;height:auto;"/>`
+      );
+    }
+  } else {
+    const link = document.createElement("a");
+    link.href = dataUrl;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
+}
 
   return (
     <div className="min-h-screen w-full flex flex-col justify-center items-center bg-gradient-to-br from-pink-50 via-rose-50 to-red-100 relative overflow-hidden p-4">
