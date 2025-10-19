@@ -37,7 +37,6 @@ export default function WomensDay20_10() {
         try {
           await audio.play();
         } catch (e) {
-          console.warn("Autoplay bị chặn, thử kích hoạt lại bằng user action");
           document.body.addEventListener(
             "click",
             () => {
@@ -65,11 +64,11 @@ export default function WomensDay20_10() {
   }
 
   return (
-    <div className="h-screen w-full flex flex-col justify-center items-center bg-gradient-to-br from-pink-50 via-rose-50 to-red-100 relative overflow-hidden">
+    <div className="min-h-screen w-full flex flex-col justify-center items-center bg-gradient-to-br from-pink-50 via-rose-50 to-red-100 relative overflow-hidden p-4">
       <audio ref={audioRef} preload="auto" autoPlay loop />
 
       {/* Dropdown chọn nhạc */}
-      <div className="absolute top-6 right-6 bg-white/70 backdrop-blur px-4 py-3 rounded-2xl text-rose-600 font-medium shadow-md flex gap-2 z-50 border border-rose-100">
+      <div className="fixed top-4 right-4 bg-white/70 backdrop-blur px-3 py-2 rounded-xl text-rose-600 font-medium shadow-md flex gap-2 z-50 border border-rose-100 text-sm sm:text-base">
         <select
           value={song}
           onChange={(e) => setSong(e.target.value)}
@@ -82,10 +81,10 @@ export default function WomensDay20_10() {
       </div>
 
       {/* Hoa nền nhẹ nhàng */}
-      {Array.from({ length: 12 }).map((_, i) => (
+      {Array.from({ length: 10 }).map((_, i) => (
         <motion.div
           key={i}
-          className="absolute text-pink-300/40 text-3xl select-none"
+          className="absolute text-pink-300/40 text-2xl sm:text-3xl select-none"
           initial={{ y: Math.random() * 600, x: Math.random() * window.innerWidth, opacity: 0 }}
           animate={{ y: [Math.random() * 600, -100], opacity: [0.4, 0.8, 0.4] }}
           transition={{ duration: 12 + Math.random() * 6, repeat: Infinity, ease: "easeInOut" }}
@@ -106,19 +105,19 @@ export default function WomensDay20_10() {
             onClick={() => setStep("card")}
           >
             <motion.div
-              className="relative w-72 h-48 bg-gradient-to-r from-rose-300 via-pink-300 to-rose-400 rounded-3xl shadow-2xl flex justify-center items-center overflow-hidden border-4 border-white hover:scale-105 transition-transform duration-500"
+              className="relative w-60 sm:w-72 h-40 sm:h-48 bg-gradient-to-r from-rose-300 via-pink-300 to-rose-400 rounded-3xl shadow-2xl flex justify-center items-center overflow-hidden border-4 border-white hover:scale-105 transition-transform duration-500"
               animate={{ rotate: [0, 2, -2, 0] }}
               transition={{ repeat: Infinity, duration: 6 }}
             >
               <div className="absolute inset-0 bg-white/20 rounded-3xl backdrop-blur-sm" />
               <motion.div
-                className="absolute text-6xl drop-shadow-lg"
+                className="absolute text-5xl sm:text-6xl drop-shadow-lg"
                 animate={{ y: [0, -6, 0] }}
                 transition={{ duration: 1.5, repeat: Infinity }}
               >
                 💌
               </motion.div>
-              <p className="text-rose-700 font-semibold text-lg z-10 mt-24">Chạm để mở thư 💖</p>
+              <p className="text-rose-700 font-semibold text-base sm:text-lg z-10 mt-20 sm:mt-24">Chạm để mở thư 💖</p>
             </motion.div>
           </motion.div>
         )}
@@ -127,40 +126,40 @@ export default function WomensDay20_10() {
           <motion.div
             key="card"
             ref={cardRef}
-            className="w-[90%] max-w-3xl bg-white/90 px-10 py-12 rounded-3xl shadow-2xl ring-2 ring-rose-200"
+            className="w-full sm:w-[90%] max-w-3xl bg-white/90 px-5 sm:px-10 py-8 sm:py-12 rounded-3xl shadow-2xl ring-2 ring-rose-200 text-center"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1.2 }}
           >
-            <h1 className="text-center text-6xl font-extrabold text-rose-600 mb-6 drop-shadow-lg animate-pulse">{title}</h1>
-            <p className="text-center text-rose-400 mb-8 text-xl italic">{subtitle}</p>
-            <div className="relative px-4">
+            <h1 className="text-4xl sm:text-6xl font-extrabold text-rose-600 mb-4 sm:mb-6 drop-shadow-lg animate-pulse">{title}</h1>
+            <p className="text-rose-400 mb-6 sm:mb-8 text-lg sm:text-xl italic">{subtitle}</p>
+            <div className="relative px-2 sm:px-4">
               <motion.div
-                className="absolute -left-8 -top-8 text-5xl"
+                className="absolute -left-4 sm:-left-8 -top-4 sm:-top-8 text-4xl sm:text-5xl"
                 animate={{ rotate: [0, 10, -10, 0] }}
                 transition={{ repeat: Infinity, duration: 5 }}
               >
                 💖
               </motion.div>
-              <p className="whitespace-pre-wrap text-rose-700 leading-8 text-lg text-center font-medium">
+              <p className="whitespace-pre-wrap text-rose-700 leading-7 sm:leading-8 text-base sm:text-lg text-center font-medium">
                 {syncedMessage}
               </p>
               <motion.div
-                className="absolute -right-8 -bottom-8 text-5xl"
+                className="absolute -right-4 sm:-right-8 -bottom-4 sm:-bottom-8 text-4xl sm:text-5xl"
                 animate={{ rotate: [-10, 10, -10, 0] }}
                 transition={{ repeat: Infinity, duration: 5 }}
               >
                 💞
               </motion.div>
             </div>
-            <p className="text-right text-rose-500 mt-10 text-xl font-semibold">— {sender}</p>
+            <p className="text-right text-rose-500 mt-8 sm:mt-10 text-lg sm:text-xl font-semibold">— {sender}</p>
 
-            <div className="mt-6 flex flex-col items-center gap-3">
+            <div className="mt-4 sm:mt-6 flex flex-col items-center gap-3">
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={downloadPNG}
-                className="px-6 py-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-2xl shadow-lg font-bold"
+                className="px-5 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-2xl shadow-lg font-bold text-sm sm:text-base"
               >
                 💌 Tải thiệp (PNG)
               </motion.button>
