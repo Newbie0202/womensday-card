@@ -1,10 +1,9 @@
 import React, { useMemo, useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import QRCode from "react-qr-code";
 import html2canvas from "html2canvas";
 
 export default function WomensDay20_10() {
-  const [step, setStep] = useState("qr"); // qr -> envelope -> card
+  const [step, setStep] = useState("envelope"); // envelope -> card
   const [recipient, setRecipient] = useState("Em");
   const [sender, setSender] = useState("Anh");
   const [title, setTitle] = useState("Chúc Mừng 20–10 ✨");
@@ -15,7 +14,7 @@ export default function WomensDay20_10() {
 
   const syncedMessage = useMemo(() => {
     return message
-      .replaceAll("Gửi Tiểu Ngọc", `Gửi ${recipient}`)
+      .replaceAll("Gửi Em", `Gửi ${recipient}`)
       .replaceAll("— Anh", `— ${sender}`);
   }, [message, recipient, sender]);
 
@@ -30,19 +29,35 @@ export default function WomensDay20_10() {
   };
 
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.src = playlist[song].url;
-      audioRef.current.volume = 0.4;
-      const playPromise = audioRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(() => console.warn("Autoplay bị chặn."));
-      }
+    const audio = audioRef.current;
+    if (audio) {
+      audio.src = playlist[song].url;
+      audio.volume = 0.4;
+      const play = async () => {
+        try {
+          await audio.play();
+        } catch (e) {
+          console.warn("Autoplay bị chặn, thử kích hoạt lại bằng user action");
+          document.body.addEventListener(
+            "click",
+            () => {
+              audio.play();
+            },
+            { once: true }
+          );
+        }
+      };
+      play();
     }
   }, [song]);
 
   async function downloadPNG() {
     if (!cardRef.current) return;
-    const canvas = await html2canvas(cardRef.current, { backgroundColor: null, scale: 2, useCORS: true });
+    const canvas = await html2canvas(cardRef.current, {
+      backgroundColor: null,
+      scale: 2,
+      useCORS: true,
+    });
     const link = document.createElement("a");
     link.download = `thiep-20-10-${recipient}.png`;
     link.href = canvas.toDataURL("image/png");
@@ -66,11 +81,11 @@ export default function WomensDay20_10() {
         </select>
       </div>
 
-      {/* Hoa nền nhẹ nhàng hơn */}
-      {Array.from({ length: 10 }).map((_, i) => (
+      {/* Hoa nền nhẹ nhàng */}
+      {Array.from({ length: 12 }).map((_, i) => (
         <motion.div
           key={i}
-          className="absolute text-pink-300/30 text-3xl select-none"
+          className="absolute text-pink-300/40 text-3xl select-none"
           initial={{ y: Math.random() * 600, x: Math.random() * window.innerWidth, opacity: 0 }}
           animate={{ y: [Math.random() * 600, -100], opacity: [0.4, 0.8, 0.4] }}
           transition={{ duration: 12 + Math.random() * 6, repeat: Infinity, ease: "easeInOut" }}
@@ -79,39 +94,7 @@ export default function WomensDay20_10() {
         </motion.div>
       ))}
 
-      {/* Các bước hiển thị */}
       <AnimatePresence mode="wait">
-        {step === "qr" && (
-          <motion.div
-            key="qr"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            className="flex flex-col items-center justify-center text-center bg-white/85 backdrop-blur-lg px-12 py-14 rounded-3xl shadow-lg border border-rose-100 hover:shadow-rose-200 transition duration-500 ease-in-out"
-          >
-            <h1 className="text-3xl font-bold text-rose-600 mb-4">
-              🎁 Quét mã để mở thư bí mật 💌😊🌸
-            </h1>
-
-            <p className="text-rose-500 text-lg italic mb-6 max-w-md">
-              Mỗi bức thư là một món quà nhỏ... Quét mã để mở ra điều anh muốn gửi đến em 💕
-            </p>
-
-            <div className="p-3 bg-white rounded-2xl shadow-inner border border-rose-100">
-              <QRCode value="https://your-vercel-link.vercel.app" size={160} />
-            </div>
-
-            <motion.button
-              whileHover={{ scale: 1.1, backgroundColor: '#f87171' }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setStep('envelope')}
-              className="mt-8 px-6 py-3 bg-rose-500 text-white rounded-xl shadow-md font-semibold text-lg tracking-wide transition-all"
-            >
-              💞 Tôi đã quét xong – mở thư 💌
-            </motion.button>
-          </motion.div>
-        )}
-
         {step === "envelope" && (
           <motion.div
             key="envelope"
@@ -119,29 +102,24 @@ export default function WomensDay20_10() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -50 }}
             transition={{ duration: 0.8 }}
-            className="relative flex flex-col items-center"
+            className="relative flex flex-col items-center cursor-pointer"
+            onClick={() => setStep("card")}
           >
             <motion.div
-              className="w-64 h-40 bg-gradient-to-r from-pink-400 to-rose-400 rounded-t-xl shadow-lg relative overflow-hidden"
-              initial={{ scaleY: 1 }}
-              animate={{ scaleY: 0 }}
-              transition={{ duration: 1.2, delay: 1.2 }}
-            />
-            <motion.div
-              className="w-64 h-40 bg-rose-200 shadow-xl rounded-b-xl flex flex-col justify-center items-center"
-              animate={{ y: [-10, 0, -10] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
+              className="relative w-72 h-48 bg-gradient-to-r from-rose-300 via-pink-300 to-rose-400 rounded-3xl shadow-2xl flex justify-center items-center overflow-hidden border-4 border-white hover:scale-105 transition-transform duration-500"
+              animate={{ rotate: [0, 2, -2, 0] }}
+              transition={{ repeat: Infinity, duration: 6 }}
             >
-              <p className="text-rose-600 font-semibold">Thư gửi {recipient}</p>
+              <div className="absolute inset-0 bg-white/20 rounded-3xl backdrop-blur-sm" />
+              <motion.div
+                className="absolute text-6xl drop-shadow-lg"
+                animate={{ y: [0, -6, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              >
+                💌
+              </motion.div>
+              <p className="text-rose-700 font-semibold text-lg z-10 mt-24">Chạm để mở thư 💖</p>
             </motion.div>
-            <motion.button
-              onClick={() => setStep("card")}
-              className="mt-8 px-6 py-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-xl shadow-lg font-bold"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              💌 Mở thư
-            </motion.button>
           </motion.div>
         )}
 
