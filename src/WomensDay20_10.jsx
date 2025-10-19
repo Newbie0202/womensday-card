@@ -4,18 +4,18 @@ import html2canvas from "html2canvas";
 
 export default function WomensDay20_10() {
   const [step, setStep] = useState("envelope"); // envelope -> card
-  const [recipient, setRecipient] = useState("Em");
-  const [sender, setSender] = useState("Anh");
+  const [recipient, setRecipient] = useState("Thu Hương");
+  const [sender, setSender] = useState("Chim cánh cụt");
   const [title, setTitle] = useState("Chúc Mừng 20–10 ✨");
   const [subtitle, setSubtitle] = useState("Vietnamese Women's Day");
   const [message, setMessage] = useState(
-    `Gửi Em,\n\nTrong vườn hồng chiều nay, anh nhặt một tia nắng\nGói vào lá thư nhỏ, gửi đến trái tim ngoan.\nChúc em 20–10 rạng rỡ như hoa,\nBình yên như gió, và hạnh phúc như có anh ở đây.\n\n— Anh`
+    `Gửi Thu Hương,\n\nTrong vườn hồng chiều nay, Em nhặt một tia nắng\nGói vào lá thư nhỏ, gửi đến trái tim ngoan.\nChúc chị 20–10 rạng rỡ như hoa,\nBình yên như gió, và hạnh phúc như có em ở đây.\n\n— Chim cánh cụt 😁😁😁`
   );
 
   const syncedMessage = useMemo(() => {
     return message
-      .replaceAll("Gửi Em", `Gửi ${recipient}`)
-      .replaceAll("— Anh", `— ${sender}`);
+      .replaceAll("Gửi Thu Hương", `Gửi ${recipient}`)
+      .replaceAll("— Chim cánh cụt", `— ${sender}`);
   }, [message, recipient, sender]);
 
   const [song, setSong] = useState("rose");
