@@ -211,14 +211,14 @@ export default function WomensDay20_10() {
             </p>
 
             <div className="mt-4 sm:mt-6 flex flex-col items-center gap-3">
-              <motion.button
+              {/* <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={downloadPNG}
                 className="px-5 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-2xl shadow-lg font-bold text-sm sm:text-base"
               >
                 💌 Tải thiệp (PNG)
-              </motion.button>
+              </motion.button> */}
             </div>
           </motion.div>
         )}
